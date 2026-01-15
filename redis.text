@@ -1,3 +1,0 @@
-cd /home/harshwardhans-pc/Desktop/new_microblog
-source .venv/bin/activate
-rq worker microblog-tasks
