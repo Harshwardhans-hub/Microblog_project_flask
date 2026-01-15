@@ -1,23 +1,15 @@
-# Render Blueprint for Flask Microblog
-# This file defines all services needed for deployment
-
 databases:
   - name: microblog-db
     databaseName: microblog
     user: microblog
     plan: free
-    region: oregon
 
 services:
-  # Main Web Service
   - type: web
     name: microblog
     runtime: python
-    region: oregon
     plan: free
-    buildCommand: |
-      pip install -r requirements.txt
-      flask db upgrade
+    buildCommand: pip install -r requirements.txt && flask db upgrade
     startCommand: gunicorn microblog:app
     envVars:
       - key: SECRET_KEY
@@ -32,34 +24,3 @@ services:
         value: microblog.py
       - key: PYTHON_VERSION
         value: "3.11.0"
-
-  # Redis for background tasks (optional - uncomment if needed)
-  # - type: redis
-  #   name: microblog-redis
-  #   plan: free
-  #   region: oregon
-  #   maxmemoryPolicy: noeviction
-
-  # Background Worker (optional - uncomment if using RQ tasks)
-  # - type: worker
-  #   name: microblog-worker
-  #   runtime: python
-  #   region: oregon
-  #   plan: free
-  #   buildCommand: pip install -r requirements.txt
-  #   startCommand: rq worker microblog-tasks
-  #   envVars:
-  #     - key: SECRET_KEY
-  #       fromService:
-  #         name: microblog
-  #         type: web
-  #         envVarKey: SECRET_KEY
-  #     - key: DATABASE_URL
-  #       fromDatabase:
-  #         name: microblog-db
-  #         property: connectionString
-  #     - key: REDIS_URL
-  #       fromService:
-  #         name: microblog-redis
-  #         type: redis
-  #         property: connectionString
